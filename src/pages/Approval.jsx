@@ -16,10 +16,19 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Approval({ approvedVisitors }) {
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+
+  const hospitalLocalStorage = JSON.parse(localStorage.getItem("hospital"));
+
+  const navigate = useNavigate();
+
+  if (!hospitalLocalStorage) {
+    navigate("/");
+  }
 
   const handleRowClick = (visitor) => {
     setSelectedVisitor(visitor);

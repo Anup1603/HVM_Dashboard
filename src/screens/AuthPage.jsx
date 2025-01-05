@@ -30,7 +30,7 @@ const AuthPage = ({ registorHospital, loginHospital }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (isRegister) {
@@ -53,17 +53,23 @@ const AuthPage = ({ registorHospital, loginHospital }) => {
         address: "",
       });
     } else {
-      // Login logic
+      // Login
       const loginData = {
         hospitalEmail: registerFormData.hospitalEmail,
         password: registerFormData.password,
       };
 
-      loginHospital(loginData);
+      const loginSuccess = await loginHospital(loginData);
 
-      console.log("Login Data:", loginData);
-      alert("Login Successful! Redirecting to your hospital dashboard...");
-      navigate("/auth/hospitalProfile");
+      if (loginSuccess) {
+        alert("Login Successful! Redirecting to your hospital dashboard...");
+        navigate("/auth/hospitalProfile");
+      } else {
+        setRegisterFormData({
+          hospitalEmail: "",
+          password: "",
+        });
+      }
     }
   };
 

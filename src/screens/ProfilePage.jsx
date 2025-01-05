@@ -21,6 +21,10 @@ const ProfilePage = () => {
   // Fetch hospital details from localStorage
   const hospital = JSON.parse(localStorage.getItem("hospital"));
 
+  if (!hospital) {
+    navigate("/");
+  }
+
   // Open/Close dropdown menu
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);

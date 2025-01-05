@@ -20,16 +20,20 @@ import {
 import "../Dash.css";
 
 import axios from "../../src/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
-function Requested({
-  visitors,
-  setApprovedVisitors,
-  setDeniedVisitors,
-  hospitalLocalStorage,
-}) {
+function Requested({ visitors, setApprovedVisitors, setDeniedVisitors }) {
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [sortOrder, setSortOrder] = useState("desc");
+
+  const navigate = useNavigate();
+
+  const hospitalLocalStorage = JSON.parse(localStorage.getItem("hospital"));
+
+  if (!hospitalLocalStorage) {
+    navigate("/");
+  }
 
   const handleApproval = async (id) => {
     try {
@@ -40,7 +44,6 @@ function Requested({
 
       if (response.status === 200) {
         const updatedVisitor = response.data;
-        console.log(`Approved visitor with ID: ${id}`);
         setApprovedVisitors((prev) => [...prev, updatedVisitor]);
       }
     } catch (error) {
