@@ -37,7 +37,6 @@ const AuthPage = ({ registorHospital, loginHospital }) => {
       // Registration logic
       const hospital = { ...registerFormData };
       registorHospital(hospital);
-      console.log("Registration Data:", hospital);
 
       alert(
         "Registration Successful! Now you can login with your email Id and password."
@@ -106,9 +105,28 @@ const AuthPage = ({ registorHospital, loginHospital }) => {
           }}
         >
           <Link to="/" style={{ textDecoration: "none" }}>
-            <h1 style={{ backgroundColor: "#ccc", color: "#673ab7" }}>
-              HVM Portal
-            </h1>
+            <div
+              style={{
+                width: "90px",
+                height: "90px",
+                borderRadius: "50%",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transform: "scale(2)",
+                }}
+                src="/Gemini_Generated_Image_5u4tdz5u4tdz5u4t.jpeg"
+                alt="HVM Logo"
+              />
+            </div>
           </Link>
         </Grid>
 

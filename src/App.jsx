@@ -27,7 +27,6 @@ function App() {
           "Content-Type": "application/json",
         },
       });
-      console.log("Hospital Register Data:", data);
       setHospitalData([...hospitalData, data]);
     } catch (error) {
       console.error("Error fetching :", error);
