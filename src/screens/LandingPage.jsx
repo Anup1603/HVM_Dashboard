@@ -1,8 +1,19 @@
-import React from "react";
-import { Grid, Button, Box, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Grid, Button, Box, Typography, CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate(path);
+    }, 400);
+  };
+
   return (
     <Box
       sx={{
@@ -25,30 +36,28 @@ const LandingPage = () => {
             backgroundPosition: "center",
           }}
         >
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <div
+          <div
+            style={{
+              width: "90px",
+              height: "90px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
               style={{
-                width: "90px",
-                height: "90px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: "scale(2)",
               }}
-            >
-              <img
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  transform: "scale(2)",
-                }}
-                src="/Gemini_Generated_Image_5u4tdz5u4tdz5u4t.jpeg"
-                alt="HVM Logo"
-              />
-            </div>
-          </Link>
+              src="/Gemini_Generated_Image_5u4tdz5u4tdz5u4t.jpeg"
+              alt="HVM Logo"
+            />
+          </div>
         </Grid>
 
         {/* Right Section with Buttons */}
@@ -84,22 +93,40 @@ const LandingPage = () => {
               maxWidth: 300,
             }}
           >
-            <Link to="/auth/register" style={{ textDecoration: "none" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
+            {loading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                Register
-              </Button>
-            </Link>
+                <CircularProgress color="primary" />
+              </Box>
+            ) : (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  size="large"
+                  onClick={() => handleNavigation("/auth/register")}
+                >
+                  Register
+                </Button>
 
-            <Link to="/auth/login" style={{ textDecoration: "none" }}>
-              <Button variant="outlined" color="primary" fullWidth size="large">
-                Log In
-              </Button>
-            </Link>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  size="large"
+                  onClick={() => handleNavigation("/auth/login")}
+                >
+                  Log In
+                </Button>
+              </>
+            )}
           </Box>
         </Grid>
       </Grid>

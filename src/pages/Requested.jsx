@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SideNav from "../components/SideNav";
 import NavBar from "../components/NavBar";
-
 import {
   Box,
   Table,
@@ -15,10 +14,10 @@ import {
   Modal,
   Typography,
   TableSortLabel,
+  CircularProgress,
 } from "@mui/material";
 
 import "../Dash.css";
-
 import axios from "../../src/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
@@ -26,16 +25,19 @@ function Requested({ visitors, setApprovedVisitors, setDeniedVisitors }) {
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [sortOrder, setSortOrder] = useState("desc");
+  const [loadingVisitorId, setLoadingVisitorId] = useState(null); // Tracks loading for Approve/Deny buttons
 
   const navigate = useNavigate();
-
   const hospitalLocalStorage = JSON.parse(localStorage.getItem("hospital"));
 
+  // Redirect to login if hospital info is missing
   if (!hospitalLocalStorage) {
     navigate("/");
   }
 
+  // Handle visitor approval
   const handleApproval = async (id) => {
+    setLoadingVisitorId(id);
     try {
       const response = await axios.put(
         `/api/visitors/${hospitalLocalStorage._id}/${id}`,
@@ -48,10 +50,14 @@ function Requested({ visitors, setApprovedVisitors, setDeniedVisitors }) {
       }
     } catch (error) {
       console.error("Error approving visitor:", error);
+    } finally {
+      setLoadingVisitorId(null);
     }
   };
 
+  // Handle visitor denial
   const handleDenied = async (id) => {
+    setLoadingVisitorId(id);
     try {
       const response = await axios.put(
         `/api/visitors/${hospitalLocalStorage._id}/${id}`,
@@ -67,23 +73,29 @@ function Requested({ visitors, setApprovedVisitors, setDeniedVisitors }) {
       }
     } catch (error) {
       console.error("Error denying visitor:", error);
+    } finally {
+      setLoadingVisitorId(null);
     }
   };
 
+  // Open visitor details modal
   const handleRowClick = (visitor) => {
     setSelectedVisitor(visitor);
     setOpenModal(true);
   };
 
+  // Close modal
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedVisitor(null);
   };
 
+  // Handle sorting by entry time
   const handleSort = () => {
     setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
+  // Sort visitors by entry time
   const sortedVisitors = [...visitors].sort((a, b) => {
     const dateA = new Date(a.createdAt);
     const dateB = new Date(b.createdAt);
@@ -146,29 +158,34 @@ function Requested({ visitors, setApprovedVisitors, setDeniedVisitors }) {
                         minute: "2-digit",
                       })}
                     </TableCell>
-
                     <TableCell align="center">
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        sx={{ mr: 1 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleApproval(visitor._id);
-                        }}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDenied(visitor._id);
-                        }}
-                      >
-                        Deny
-                      </Button>
+                      {loadingVisitorId === visitor._id ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        <>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            sx={{ mr: 1 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApproval(visitor._id);
+                            }}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDenied(visitor._id);
+                            }}
+                          >
+                            Deny
+                          </Button>
+                        </>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

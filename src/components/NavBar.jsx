@@ -6,17 +6,15 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useAppStore } from "../AppStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -57,16 +55,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const AppBar = styled(
-  MuiAppBar,
-  {}
-)(({ theme }) => ({
+const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
 }));
 
 export default function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false); // State for loader
+  const navigate = useNavigate();
 
   const updateOpen = useAppStore((state) => state.updateOpen);
   const dopen = useAppStore((state) => state.dopen);
@@ -91,6 +88,14 @@ export default function NavBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleProfileClick = () => {
+    setIsLoading(true); // Show loader
+    setTimeout(() => {
+      setIsLoading(false); // Hide loader after 0.4 seconds
+      navigate("/auth/hospitalProfile"); // Navigate to the Profile page
+    }, 400);
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -109,12 +114,7 @@ export default function NavBar() {
       onClose={handleMenuClose}
       sx={{ marginTop: "40px" }}
     >
-      <Link
-        to="/auth/hospitalProfile"
-        style={{ textDecoration: "none", color: "black" }}
-      >
-        <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      </Link>
+      <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
     </Menu>
   );
 
@@ -135,31 +135,11 @@ export default function NavBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem onClick={handleProfileClick}>
         <IconButton
           size="large"
           aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
+          aria-controls={menuId}
           aria-haspopup="true"
           color="inherit"
         >
@@ -170,8 +150,30 @@ export default function NavBar() {
     </Menu>
   );
 
+  const hospital = JSON.parse(localStorage.getItem("hospital"));
   return (
     <Box sx={{ flexGrow: 1 }}>
+      {isLoading && (
+        <Box
+          sx={{
+            minHeight: "100vh",
+            background: "#e8f0fe",
+          }}
+        >
+          <Typography variant="h6" sx={{ color: "white", fontWeight: "bold" }}>
+            <CircularProgress
+              size={64}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                color: "#673ab7",
+              }}
+            />
+          </Typography>
+        </Box>
+      )}
       <AppBar
         position="fixed"
         sx={{ backgroundColor: "#ffffff", color: "#2f2f2f" }}
@@ -183,7 +185,7 @@ export default function NavBar() {
             color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2 }}
-            onClick={() => updateOpen(!dopen)} // Fix: wrapped in arrow function
+            onClick={() => updateOpen(!dopen)}
           >
             <MenuIcon />
           </IconButton>
@@ -193,7 +195,7 @@ export default function NavBar() {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            HVM Dashboard
+            {`HVM Dashboard - ${hospital.hospitalName}`}
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -206,24 +208,6 @@ export default function NavBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            {/* <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton> */}
-            {/* <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton> */}
             <IconButton
               size="large"
               edge="end"

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Typography, TextField, Button, Box, Paper } from "@mui/material";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { IconButton, InputAdornment } from "@mui/material";
+import { IconButton, InputAdornment, CircularProgress } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AuthPage = ({ registorHospital, loginHospital }) => {
   const { authMode } = useParams();
   const [isRegister, setIsRegister] = useState(authMode === "register");
+  const [loading, setLoading] = useState(false);
   const [registerFormData, setRegisterFormData] = useState({
     hospitalName: "",
     hospitalEmail: "",
@@ -72,9 +73,13 @@ const AuthPage = ({ registorHospital, loginHospital }) => {
     }
   };
 
-  // Toggle function
+  // Toggle function with loader
   const toggleAuthMode = () => {
-    setIsRegister(!isRegister);
+    setLoading(true);
+    setTimeout(() => {
+      setIsRegister(!isRegister);
+      setLoading(false);
+    }, 400);
   };
 
   // Sync isRegister state when route changes
@@ -146,130 +151,149 @@ const AuthPage = ({ registorHospital, loginHospital }) => {
             elevation={3}
             sx={{ padding: 4, maxWidth: 400, width: "100%" }}
           >
-            {/* Title */}
-            <Typography variant="h5" gutterBottom textAlign="center">
-              {isRegister ? "Hospital Registration" : "Hospital Login"}
-            </Typography>
-
-            {/* Description */}
-            <Typography
-              variant="body2"
-              gutterBottom
-              textAlign="center"
-              color="textSecondary"
-            >
-              {isRegister
-                ? "Create an account to manage your hospital operations efficiently."
-                : "Log in to access your hospital portal."}
-            </Typography>
-
-            {/* Form */}
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-              {/* Registration Fields */}
-              {isRegister && (
-                <>
-                  <TextField
-                    fullWidth
-                    label="Hospital Name"
-                    name="hospitalName"
-                    margin="normal"
-                    onChange={handleChange}
-                    value={registerFormData.hospitalName}
-                    required
-                  />
-                  <TextField
-                    fullWidth
-                    label="Phone Number"
-                    name="phoneNumber"
-                    margin="normal"
-                    onChange={handleChange}
-                    value={registerFormData.phoneNumber}
-                    required
-                  />
-                  <TextField
-                    fullWidth
-                    label="Registration Number"
-                    name="registrationNumber"
-                    margin="normal"
-                    onChange={handleChange}
-                    value={registerFormData.registrationNumber}
-                    required
-                  />
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    name="address"
-                    margin="normal"
-                    onChange={handleChange}
-                    value={registerFormData.address}
-                    multiline
-                    rows={3}
-                    required
-                  />
-                </>
-              )}
-
-              {/* Email Field */}
-              <TextField
-                fullWidth
-                label="Email"
-                name="hospitalEmail"
-                margin="normal"
-                type="email"
-                onChange={handleChange}
-                value={registerFormData.hospitalEmail}
-                required
-              />
-
-              {/* Password Field */}
-              <TextField
-                fullWidth
-                label="Password"
-                name="password"
-                margin="normal"
-                type={showPassword ? "text" : "password"} // Toggle between text and password types
-                onChange={handleChange}
-                value={registerFormData.password}
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
+            {/* Loader */}
+            {loading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: "300px",
                 }}
-              />
-
-              {/* Submit Button */}
-              <Button
-                fullWidth
-                variant="contained"
-                type="submit"
-                sx={{ mt: 2 }}
               >
-                {isRegister ? "Register" : "Login"}
-              </Button>
+                <CircularProgress color="primary" />
+              </Box>
+            ) : (
+              <>
+                {/* Title */}
+                <Typography variant="h5" gutterBottom textAlign="center">
+                  {isRegister ? "Hospital Registration" : "Hospital Login"}
+                </Typography>
 
-              {/* Toggle Link */}
-              <Typography
-                variant="body2"
-                textAlign="center"
-                color="primary"
-                sx={{ mt: 2, cursor: "pointer" }}
-                onClick={toggleAuthMode}
-              >
-                <Link
-                  to={isRegister ? "/auth/login" : "/auth/register"}
-                  style={{ textDecoration: "none", color: "#673ab7" }}
+                {/* Description */}
+                <Typography
+                  variant="body2"
+                  gutterBottom
+                  textAlign="center"
+                  color="textSecondary"
                 >
                   {isRegister
-                    ? "Already have an account? Log in"
-                    : "Don't have an account? Register"}
-                </Link>
-              </Typography>
-            </Box>
+                    ? "Create an account to manage your hospital operations efficiently."
+                    : "Log in to access your hospital portal."}
+                </Typography>
+
+                {/* Form */}
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                  {/* Registration Fields */}
+                  {isRegister && (
+                    <>
+                      <TextField
+                        fullWidth
+                        label="Hospital Name"
+                        name="hospitalName"
+                        margin="normal"
+                        onChange={handleChange}
+                        value={registerFormData.hospitalName}
+                        required
+                      />
+                      <TextField
+                        fullWidth
+                        label="Phone Number"
+                        name="phoneNumber"
+                        margin="normal"
+                        onChange={handleChange}
+                        value={registerFormData.phoneNumber}
+                        required
+                      />
+                      <TextField
+                        fullWidth
+                        label="Registration Number"
+                        name="registrationNumber"
+                        margin="normal"
+                        onChange={handleChange}
+                        value={registerFormData.registrationNumber}
+                        required
+                      />
+                      <TextField
+                        fullWidth
+                        label="Address"
+                        name="address"
+                        margin="normal"
+                        onChange={handleChange}
+                        value={registerFormData.address}
+                        multiline
+                        rows={3}
+                        required
+                      />
+                    </>
+                  )}
+
+                  {/* Email Field */}
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    name="hospitalEmail"
+                    margin="normal"
+                    type="email"
+                    onChange={handleChange}
+                    value={registerFormData.hospitalEmail}
+                    required
+                  />
+
+                  {/* Password Field */}
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    name="password"
+                    margin="normal"
+                    type={showPassword ? "text" : "password"} // Toggle between text and password types
+                    onChange={handleChange}
+                    value={registerFormData.password}
+                    required
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={togglePasswordVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
+                  {/* Submit Button */}
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    type="submit"
+                    sx={{ mt: 2 }}
+                  >
+                    {isRegister ? "Register" : "Login"}
+                  </Button>
+
+                  {/* Toggle Link */}
+                  <Typography
+                    variant="body2"
+                    textAlign="center"
+                    color="primary"
+                    sx={{ mt: 2, cursor: "pointer" }}
+                    onClick={toggleAuthMode}
+                  >
+                    <Link
+                      to={isRegister ? "/auth/login" : "/auth/register"}
+                      style={{ textDecoration: "none", color: "#673ab7" }}
+                    >
+                      {isRegister
+                        ? "Already have an account? Log in"
+                        : "Don't have an account? Register"}
+                    </Link>
+                  </Typography>
+                </Box>
+              </>
+            )}
           </Paper>
         </Grid>
       </Grid>
