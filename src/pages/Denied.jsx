@@ -164,6 +164,20 @@ function Denied({ deniedVisitors }) {
                   minute: "2-digit",
                 })}
               </Typography>
+              {selectedVisitor.photo && (
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+                  <img
+                    src={selectedVisitor.photo}
+                    alt="Visitor Profile"
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      maxHeight: "200px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Box>
+              )}
               <Button
                 variant="contained"
                 color="primary"
